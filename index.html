@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<title>Ավետիք Իսահակյան 8-րդ դասարան</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(120deg, #89f7fe, #66a6ff);
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+}
+.quiz {
+  background: white;
+  max-width: 800px;
+  margin: auto;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+}
+button {
+  display: block;
+  width: 100%;
+  margin: 6px 0;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #eee;
+  cursor: pointer;
+  font-size: 16px;
+  transition: .2s;
+}
+button:hover {background: #ddd;}
+.correct {background: #4CAF50; color: white;}
+.wrong {background: #f44336; color: white;}
+#timer {font-size:18px; margin-bottom:10px; font-weight:bold;}
+#result {font-size: 22px; margin-top: 20px; font-weight: bold;}
+</style>
+</head>
+<body>
+
+<div class="quiz">
+<h2>📚 Ավետիք Իսահակյան — Հարցում</h2>
+<div id="timer">⏱ 10</div>
+<div id="quiz"></div>
+<h3 id="result"></h3>
+</div>
+
+<script>
+const questions = [
+{q:"Ի՞նչ անունով էր կոչվում Գյումրին Իսահակյանի ծննդյան ժամանակ։", a:["Կումայրի","Լենինական","Ալեքսանդրապոլ","Կարս"], correct:"Ալեքսանդրապոլ"},
+  {q:"Երբ է ծնվել Ավետիք Իսահակյանը։", a:["1865","1875","1885","1890"], correct:"1875"},
+  {q:"Ո՞ր հայտնի պոեմն է գրել Իսահակյանը։", a:["Անուշ","Աբու-Լալա Մահարի","Դավիթ Սասունցի","Քաջ Նազար"], correct:"Աբու-Լալա Մահարի"},
+  {q:"Որտե՞ղ է գտնվում Իսահակյանի տուն-թանգարանը։", a:["Գյումրի","Վանաձոր","Երևան","Թբիլիսի"], correct:"Երևան"},
+  {q:"Իսահակյանը հիմնականում ինչ էր գրում։", a:["Բանաստեղծություններ","Ֆիլմերի սցենարներ","Վեպեր","Պիեսներ"], correct:"Բանաստեղծություններ"},
+  {q:"Ի՞նչ թեմաներ էին հաճախ նրա ստեղծագործություններում։", a:["Քաղաքականություն","Սպորտ","Սեր, հայրենիք, կարոտ","Տեխնիկա"], correct:"Սեր, հայրենիք, կարոտ"},
+  {q:"Ո՞ր թվականին է մահացել Իսահակյանը։", a:["1960","1957","1945","1938"], correct:"1957"},
+  {q:"Որտե՞ղ է ապրել արտասահմանում։", a:["Միայն Ռուսաստան","Եվրոպայի տարբեր երկրներում","Միայն ԱՄՆ","Աֆրիկայում"], correct:"Եվրոպայի տարբեր երկրներում"},
+  {q:"Իսահակյանը համարվում է հայ գրականության…", a:["Ժամանակակից բլոգեր","Լրագրող","Դասական բանաստեղծ","Գիտնական"], correct:"Դասական բանաստեղծ"},
+  {q:"«Անահիտ» ստեղծագործությունը ինչ է։", a:["Ֆիլմ","Վեպ","Օպերա","Բանաստեղծություն"], correct:"Բանաստեղծություն"},
+  {q:"Իսահակյանը նաև եղել է…", a:["Բանկիր","Օդաչու","Մարզիչ","Հասարակական գործիչ"], correct:"Հասարակական գործիչ"},
+  {q:"Իսահակյանի ստեղծագործությունները հիմնականում գրված են…", a:["Ֆրանսերեն","Հայերեն","Անգլերեն","Իսպաներեն"], correct:"Հայերեն"},
+  {q:"Նա որ դարի գրող է հիմնականում։", a:["18-րդ դար","21-րդ դար","17-րդ դար","19-20-րդ դար"], correct:"19-20-րդ դար"},
+  {q:"Իսահակյանի բանաստեղծությունները հաճախ ունեն…", a:["Քնարական բնույթ","Գիտական հաշվարկներ","Ֆուտբոլ","Տեխնիկական լեզու"], correct:"Քնարական բնույթ"},
+  {q:"Որտե՞ղ է ծնվել Իսահակյանը (այժմյան անունով)։", a:["Գորիս","Երևան","Կապան","Գյումրի"], correct:"Գյումրի"},
+  {q:"Իսահակյանի անունով կա՞ փողոցներ ու դպրոցներ։", a:["Չգիտեմ","Միայն Եվրոպայում","Ոչ","Այո"], correct:"Այո"},
+  {q:"Իսահակյանի ստեղծագործությունները հիմնականում…", a:["Ֆիլմեր","Խաղեր","Բանաստեղծական են","Դասագրքեր"], correct:"Բանաստեղծական են"},
+  {q:"Իսահակյանի գրականությունը հիմնականում պատկանում է…", a:["Ռուսական գրականություն","Հայ դասական գրականություն","Ամերիկյան գրականություն","Ճապոնական գրականություն"], correct:"Հայ դասական գրականություն"},
+  {q:"Նրա գործերում հաճախ կա…", a:["Կարոտ հայրենիքի նկատմամբ","Ֆուտբոլ","Քիմիա","Տեխնիկական գծագրեր"], correct:"Կարոտ հայրենիքի նկատմամբ"},
+  {q:"Իսահակյանի գրական ժառանգությունը համարվում է…", a:["Չգնահատված","Երկրորդական","Շատ կարևոր հայկական մշակույթի համար","Անհայտ"], correct:"Շատ կարևոր հայկական մշակույթի համար"}
+];
+
+const quizContainer = document.getElementById("quiz");
+const resultContainer = document.getElementById("result");
+const timerDiv = document.getElementById("timer");
+let current = 0;
+let score = 0;
+let timer;
+let timeLeft = 10;
+
+function shuffle(array) {
+  for (let i = array.length-1; i>0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function showQuestion(i){
+  quizContainer.innerHTML = "";
+  const q = questions[i];
+  let div = document.createElement("div");
+  div.innerHTML = "<h3>"+(i+1)+". "+q.q+"</h3>";
+
+  let shuffled = shuffle([...q.a]);
+  shuffled.forEach(ans=>{
+    let btn = document.createElement("button");
+    btn.textContent = ans;
+    btn.onclick = ()=>{
+      if(div.dataset.answered) return;
+      clearInterval(timer);
+      div.dataset.answered = true;
+
+      if(ans === q.correct){
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+        Array.from(div.getElementsByTagName("button")).forEach(b=>{
+          if(b.textContent === q.correct) b.classList.add("correct");
+        });
+      }
+      setTimeout(nextQuestion, 1000);
+    };
+    div.appendChild(btn);
+  });
+
+  quizContainer.appendChild(div);
+
+  // Սկսում ենք 10 վայրկյան timer
+  timeLeft = 10;
+  timerDiv.textContent = "⏱ "+timeLeft;
+  timer = setInterval(()=>{
+    timeLeft--;
+    timerDiv.textContent = "⏱ "+timeLeft;
+    if(timeLeft <= 0){
+      clearInterval(timer);
+      div.dataset.answered = true;
+      Array.from(div.getElementsByTagName("button")).forEach(b=>{
+        if(b.textContent === q.correct) b.classList.add("correct");
+      });
+      setTimeout(nextQuestion, 1000);
+    }
+  }, 1000);
+}
+
+function nextQuestion(){
+  current++;
+  if(current < questions.length){
+    showQuestion(current);
+  } else {
+    quizContainer.innerHTML = "";
+    timerDiv.textContent = "";
+    resultContainer.textContent = "Քո արդյունքը՝ "+score+" / "+questions.length;
+  }
+}
+
+// Սկսում ենք quiz-ը
+showQuestion(current);
+</script>
+
+</body>
+</html>
